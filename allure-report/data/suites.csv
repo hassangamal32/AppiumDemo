@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","18085","Add product to cart and verify name","SauceLabs Suite","Wed Aug 13 17:41:25 EET 2025","passed","Wed Aug 13 17:41:43 EET 2025","tests.ScrollTest","Scroll Tests","tests.ScrollTest","testAddToCartAndVerify"
-"","17716","Verify price of Sauce Labs Bolt T-Shirt","SauceLabs Suite","Wed Aug 13 17:41:52 EET 2025","passed","Wed Aug 13 17:42:10 EET 2025","tests.ScrollTest","Scroll Tests","tests.ScrollTest","testPriceVerification"
