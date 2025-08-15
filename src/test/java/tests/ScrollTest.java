@@ -32,10 +32,9 @@ public class ScrollTest {
 
         cap.setCapability("platformName", "Android");
         cap.setCapability("appium:automationName", "UiAutomator2");
-        cap.setCapability("appium:deviceName", "AVD1");
-        cap.setCapability("appium:platformVersion", "15");
+        cap.setCapability("appium:deviceName", "AVD_Test");
         cap.setCapability("appium:appActivity", "com.swaglabsmobileapp.MainActivity");
-        cap.setCapability("appium:app", "D:/APKs/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk");
+        cap.setCapability("appium:app", System.getProperty("user.dir") + "\\APKs\\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk");
         cap.setCapability("appium:autoGrantPermissions", true);
         cap.setCapability("appium:noReset", false);
 
