@@ -1,0 +1,7 @@
+{
+  "platformName": "Android",
+  "deviceName": "AVD_Test",
+  "automationName": "UiAutomator2",
+  "appActivity": "com.swaglabsmobileapp.MainActivity",
+  "app": "System.getProperty(\"user.dir\") + \"\\\\APKs\\\\Android.SauceLabs.Mobile.Sample.app.2.7.1.apk\""
+}

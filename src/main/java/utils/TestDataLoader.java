@@ -1,7 +1,6 @@
 package utils;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class TestDataLoader {
@@ -10,11 +9,16 @@ public class TestDataLoader {
     static {
         try {
             properties = new Properties();
-            FileInputStream fis = new FileInputStream("src/test/resources/testdata.properties");
-            properties.load(fis);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load test data properties file.");
+            // Load from classpath instead of file path
+            InputStream input = TestDataLoader.class.getClassLoader()
+                    .getResourceAsStream("testdata.properties");
+            if (input != null) {
+                properties.load(input);
+            } else {
+                throw new RuntimeException("testdata.properties file not found in classpath");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load test data properties file.", e);
         }
     }
 

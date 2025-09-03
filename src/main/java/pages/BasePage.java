@@ -1,19 +1,22 @@
-
 package pages;
-
+import org.openqa.selenium.By;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.interactions.Pause;
+import utils.ConfigManager;
+
 import java.time.Duration;
 import java.util.Collections;
 
 public class BasePage {
     protected AppiumDriver driver;
+    protected String platform;
 
     public BasePage(AppiumDriver driver) {
         this.driver = driver;
+        this.platform = ConfigManager.getPlatform();
     }
 
     public void longPress(WebElement element, int durationInSeconds) {
@@ -28,5 +31,18 @@ public class BasePage {
         longPress.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
         driver.perform(Collections.singletonList(longPress));
+    }
+
+    // Platform-specific element interaction methods
+    protected String getPlatformSpecificText(String androidText, String iosText) {
+        return platform.equalsIgnoreCase("android") ? androidText : iosText;
+    }
+
+    protected boolean isAndroid() {
+        return platform.equalsIgnoreCase("android");
+    }
+
+    protected boolean isIOS() {
+        return platform.equalsIgnoreCase("ios");
     }
 }

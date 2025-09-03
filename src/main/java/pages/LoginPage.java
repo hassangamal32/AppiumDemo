@@ -1,18 +1,39 @@
 package pages;
 
 import io.appium.java_client.AppiumBy;
-import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.AppiumDriver;
+import org.openqa.selenium.By;
+import utils.DriverUtils;
 
-public class LoginPage {
-    AndroidDriver driver;
+public class LoginPage extends BasePage {
+    // Platform-specific locators
+    private final By usernameField;
+    private final By passwordField;
+    private final By loginButton;
 
-    public LoginPage(AndroidDriver driver) {
-        this.driver = driver;
+    private DriverUtils utils;
+
+    public LoginPage(AppiumDriver driver) {
+        super(driver);
+
+        // Initialize platform-specific locators
+        if (isAndroid()) {
+            usernameField = AppiumBy.accessibilityId("test-Username");
+            passwordField = AppiumBy.accessibilityId("test-Password");
+            loginButton = AppiumBy.accessibilityId("test-LOGIN");
+        } else {
+            // iOS locators
+            usernameField = AppiumBy.accessibilityId("usernameTextField");
+            passwordField = AppiumBy.accessibilityId("passwordTextField");
+            loginButton = AppiumBy.accessibilityId("loginButton");
+        }
+
+        this.utils = new DriverUtils(driver, 10);
     }
 
     public void login(String username, String password) {
-        driver.findElement(AppiumBy.accessibilityId("test-Username")).sendKeys(username);
-        driver.findElement(AppiumBy.accessibilityId("test-Password")).sendKeys(password);
-        driver.findElement(AppiumBy.accessibilityId("test-LOGIN")).click();
+        utils.sendKeys(usernameField, username);
+        utils.sendKeys(passwordField, password);
+        utils.click(loginButton);
     }
 }

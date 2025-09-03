@@ -1,78 +1,55 @@
 package tests;
 
-import io.appium.java_client.AppiumBy;
-import io.qameta.allure.*;
-import org.openqa.selenium.By;
-import org.testng.annotations.*;
-import utils.DriverUtils;
-import utils.TestDataLoader;
-import com.aventstack.extentreports.ExtentTest;
-import com.aventstack.extentreports.Status;
+import base.BaseTest;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import io.qameta.allure.*;
+import org.testng.annotations.Test;
 import pages.*;
-import utils.ExtentReportManager;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import utils.TestDataLoader;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 @Epic("Cart Functionality")
 @Feature("Remove Product from Cart")
-public class ScrollTest {
+public class ScrollTest extends BaseTest {
+    private LoginPage loginPage;
+    private ProductsPage productsPage;
+    private ProductDetailPage productDetailPage;
+    private CartPage cartPage;
 
-    AndroidDriver driver;
-    DriverUtils driverUtils;
-    LoginPage loginPage;
-    ProductsPage productsPage;
-    ProductDetailPage productDetailPage;
-    CartPage cartPage;
-
-    ExtentTest test;
-
-    @BeforeMethod
-    public void setUp() throws MalformedURLException {
-        DesiredCapabilities cap = new DesiredCapabilities();
-
-        cap.setCapability("platformName", "Android");
-        cap.setCapability("appium:automationName", "UiAutomator2");
-        cap.setCapability("appium:deviceName", "RKCY4000D7T");
-        cap.setCapability("appium:platformVersion", "15");
-        cap.setCapability("appium:appActivity", "com.swaglabsmobileapp.MainActivity");
-        cap.setCapability("appium:app", "D:/APKs/Android.SauceLabs.Mobile.Sample.app.2.7.1.apk");
-        cap.setCapability("appium:autoGrantPermissions", true);
-        cap.setCapability("appium:noReset", false);
-
-        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/"), cap);
-        driverUtils = new DriverUtils(driver, 10);
-
+    @Override
+    protected void initializePageObjects() {
         loginPage = new LoginPage(driver);
         productsPage = new ProductsPage(driver);
         productDetailPage = new ProductDetailPage(driver);
         cartPage = new CartPage(driver);
-
-        test = ExtentReportManager.getReporter().createTest("Scroll Test");
     }
 
-    @Test(description = "Verify price of Sauce Labs Bolt T-Shirt")
-    public void testPriceVerification() {
-        loginPage.login("standard_user", "secret_sauce");
-        productsPage.scrollToProduct("Sauce Labs Bolt T-Shirt");
-        driverUtils.waitForVisibility(By.xpath("//*[@text='Sauce Labs Bolt T-Shirt']"));
-        productsPage.openProduct("Sauce Labs Bolt T-Shirt");
-        driverUtils.waitForVisibility(By.xpath("//*[@text='Sauce Labs Bolt T-Shirt']"));
 
+
+    @Test(description = "Verify price of Sauce Labs Bolt T-Shirt")
+    @Story("User verifies product price")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Test to verify the price of Sauce Labs Bolt T-Shirt")
+    public void testPriceVerification() {
+        String username = TestDataLoader.get("username");
+        String password = TestDataLoader.get("password");
+
+        loginPage.login(username, password);
+        productsPage.scrollToProduct("Sauce Labs Bolt T-Shirt");
+        productsPage.openProduct("Sauce Labs Bolt T-Shirt");
         productDetailPage.scrollToPrice();
         String price = productDetailPage.getPrice();
 
-        test.log(Status.INFO, "Product price found: " + price);
+        test.info("Product price found: " + price);
         assertEquals(price, "$15.99");
-        test.pass("Price verification passed");
     }
 
     @Test(description = "Add product to cart and verify name")
+    @Story("User adds product to cart")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Test to add a product to cart and verify the name matches")
     public void testAddToCartAndVerify() {
         String username = TestDataLoader.get("username");
         String password = TestDataLoader.get("password");
@@ -80,17 +57,14 @@ public class ScrollTest {
 
         loginPage.login(username, password);
         productsPage.scrollToProduct(productName);
-        driverUtils.waitForVisibility(By.xpath("//*[@text='" + productName + "']"));
         productsPage.openProduct(productName);
-        driverUtils.waitForVisibility(By.xpath("//*[@text='" + productName + "']"));
-        productDetailPage.scrollToAddToCartButton();
         String productTitle = productDetailPage.getProductTitle(productName);
+        productDetailPage.scrollToAddToCartButton();
         productDetailPage.addToCart();
-        driverUtils.waitForVisibility(By.className("android.widget.ImageView"));
         productDetailPage.openCart();
-        driverUtils.waitForVisibility(By.xpath("//*[@text='" + productName + "']"));
         String cartTitle = cartPage.getProductTitle(productName);
-        assertEquals(productTitle, cartTitle);
+
+        assertEquals(productTitle, cartTitle, "Product title should match between product page and cart");
         test.pass("Product title matched between product page and cart");
     }
 
@@ -99,32 +73,20 @@ public class ScrollTest {
     @Severity(SeverityLevel.CRITICAL)
     @Description("Test to add a product to cart, remove it with swipe, and assert it's gone")
     public void testRemoveProductFromCart() {
-        loginPage.login("standard_user", "secret_sauce");
-        productsPage.scrollToProduct("Sauce Labs Onesie");
-        driverUtils.waitForVisibility(By.xpath("//*[@text='Sauce Labs Onesie']"));
-        productsPage.openProduct("Sauce Labs Onesie");
-        driverUtils.waitForVisibility(By.xpath("//*[@text='Sauce Labs Onesie']"));
+        String username = TestDataLoader.get("username");
+        String password = TestDataLoader.get("password");
+        String productName = TestDataLoader.get("productName");
+
+        loginPage.login(username, password);
+        productsPage.scrollToProduct(productName);
+        productsPage.openProduct(productName);
         productDetailPage.scrollToAddToCartButton();
-
-
         productDetailPage.addToCart();
-        driverUtils.waitForVisibility(By.className("android.widget.ImageView"));
         productDetailPage.openCart();
-        driverUtils.waitForVisibility(By.xpath("//*[@text='Sauce Labs Onesie']"));
-        cartPage.swipeLeftOnProductFromCenter("Sauce Labs Onesie", 1000);
+        cartPage.swipeToRemoveProduct(productName);
         cartPage.clickRemoveIcon();
-        assertFalse(cartPage.isProductInCart("Sauce Labs Onesie"), "Product should be removed from cart");
+
+        assertFalse(cartPage.isProductInCart(productName), "Product should be removed from cart");
         test.pass("Product successfully removed from cart");
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) driver.quit();
-        ExtentReportManager.flushReports();
-    }
-
-    @AfterSuite(alwaysRun = true)
-    public void tearDownReports() {
-        ExtentReportManager.flushReports();
     }
 }

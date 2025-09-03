@@ -1,6 +1,8 @@
 package CustomListeners;
 
 import org.testng.*;
+import utils.AllureReportGenerator;
+import utils.AllureUtils;
 
 public class TestNGListeners implements IInvokedMethodListener, ITestListener, IExecutionListener, IRetryAnalyzer {
     public void beforeInvocation(IInvokedMethod method, ITestResult testResult) {
@@ -27,10 +29,18 @@ public class TestNGListeners implements IInvokedMethodListener, ITestListener, I
 
     public void onExecutionStart() {
         System.out.println("Execution Started");
+        // ConfigManager loads properties automatically, no need for PropertyReader
+        AllureUtils.cleanAllureResults();
     }
 
     public void onExecutionFinish() {
         System.out.println("Execution Finished");
+
+        // Generate Allure report automatically after test execution
+        AllureReportGenerator.generateAllureReport();
+
+        // If Allure CLI is not available, try with Maven
+        // AllureReportGenerator.generateAllureReportWithMaven();
     }
 
     private int attemps = 0;
@@ -41,7 +51,6 @@ public class TestNGListeners implements IInvokedMethodListener, ITestListener, I
             attemps++;
             return true;
         }
-            return false;
+        return false;
     }
-
 }

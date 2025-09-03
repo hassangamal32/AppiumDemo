@@ -1,0 +1,7 @@
+{
+  "platformName": "iOS",
+  "deviceName": "iPhone Simulator",
+  "automationName": "XCUITest",
+  "app": "path/to/ios/app",
+  "bundleId": "com.saucelabs.SwagLabsMobileApp"
+}
